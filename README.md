@@ -22,3 +22,5 @@ pip install -r requirements.txt
 - запустить программу:
 
 python main.py -- ndata *int number*
+
+- Разбиение на потокои реализовано с помощью библиотеки **multiprocessing**
