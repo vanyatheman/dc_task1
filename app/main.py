@@ -4,6 +4,7 @@ import pickle
 from collections import deque
 from datetime import datetime
 from time import sleep
+import multiprocessing as mp
 
 from faker import Faker
 
@@ -91,7 +92,7 @@ class DataSender:
 
     def send(self, data):
         '''
-        Имитирует Отправку данных на сервер,
+        Имитирует отправку данных на сервер,
         логгирует это в терминал
         и вывод информацию о пользователе.
         '''
@@ -112,17 +113,31 @@ def main():
     generator = DataGenerator()
     dq_start = generator.generate_start()
 
-    processor = DataProcessor(dq_start)
-    processor.process()
-
-    sender = DataSender()
-    data = sender.get_data()
-    sender.send(data)
-
-    # generator.generate()
-    # processor = DataProcessor(generator.dq
+    # processor = DataProcessor(dq_start)
     # processor.process()
 
+    # sender = DataSender()
+    # data = sender.get_data()
+    # sender.send(data)
+
+    # # generator.generate()
+    # # processor = DataProcessor(generator.dq)
+    # # processor.process()
+
+    # generator_process = mp.Process(target=generator.generate)
+    processor_process = mp.Process(target=DataProcessor(dq_start).process())
+    sender_process = mp.Process(
+        target=DataSender().send,
+        args=(DataSender().get_data(),)
+    )
+
+    # generator_process.start()
+    processor_process.start()
+    sender_process.start()
+
+    # generator_process.join()
+    processor_process.join()
+    sender_process.join()
 
 if __name__ == '__main__':
     main()
